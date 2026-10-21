@@ -934,7 +934,8 @@
         .lol-card .lol-rank-place { position:absolute; top:66%; left:50%; width:88%; margin:0; transform:translate(-50%,-50%) !important; text-align:center; font-size:clamp(.9rem,1.8vw,1.2rem) !important; letter-spacing:.16em; z-index:8; }
         .lol-card .lol-player-name { position:absolute; top:77%; left:50%; width:84%; max-width:84%; margin:0; transform:translate(-50%,-50%) !important; text-align:center; font-size:clamp(1rem,2vw,1.45rem); z-index:8; }
         .lol-card .lol-points-badge { position:absolute; top:88%; left:50%; margin:0; transform:translate(-50%,-50%) !important; white-space:nowrap; z-index:8; }
-        .lol-card.rank-first .lol-points-badge { top:calc(83% + 10px) !important; }
+        .lol-card.rank-first .lol-player-name { top:calc(77% - 15px) !important; }
+        .lol-card.rank-first .lol-points-badge { top:calc(83% - 5px) !important; }
         .lol-card.rank-first .rank-crown { display:block !important; position:absolute; top:calc(38% - 30px) !important; left:50%; margin:0; transform:translate(-50%,-50%); z-index:12; color:#f3c969; font-size:1.35rem; filter:drop-shadow(0 0 8px rgba(255,202,83,.9)); animation:crownBounce 1.25s ease-in-out infinite; }
         @keyframes crownBounce { 0%,100% { transform:translate(-50%,-50%); } 50% { transform:translate(-50%,calc(-50% - 3px)); } }
         @media (min-width:768px) { .rank-stage .lol-card { aspect-ratio:.78 / 1; } }
@@ -1217,7 +1218,7 @@
                 <i class="fa-brands fa-twitch text-2xl group-hover:animate-pulse"></i><span class="social-link-label social-link-twitch">Assistir na Twitch</span>
             </a>
             <a href="https://www.youtube.com/al1ss0n" target="_blank" class="social-glint social-glint-youtube clip-hex-sm px-8 py-4 flex items-center gap-3 text-lg font-bold min-w-[200px] justify-center group border border-[#ff0000] text-[#ff0000] hover:bg-[#ff0000] hover:text-white transition-all duration-300">
-                <i class="fa-brands fa-youtube text-2xl group-hover:animate-pulse"></i><span class="social-link-label social-link-youtube">Ver no YouTube</span>
+                <i class="fa-brands fa-youtube text-2xl group-hover:animate-pulse"></i><span class="social-link-label social-link-youtube">Canal do YouTube</span>
             </a>
             <a href="https://www.instagram.com/al1ss0nl" target="_blank" class="social-glint social-glint-instagram clip-hex-sm px-8 py-4 flex items-center gap-3 text-lg font-bold min-w-[200px] justify-center group border border-[#c13584] text-[#c13584] hover:text-white hover:border-transparent hover:bg-gradient-to-r hover:from-purple-600 hover:to-yellow-400 transition-all duration-300">
                 <i class="fa-brands fa-instagram text-2xl group-hover:animate-pulse"></i><span class="social-link-label social-link-instagram">Seguir no Insta</span>
@@ -1292,6 +1293,7 @@
 
 </body>
 </html>
+
 
 
 
