@@ -6,41 +6,25 @@ import requests
 # ============================================================
 
 CANAL = "al1ss0nl"
+BOTRIX_API_URL = "https://botrix.live/api/public/leaderboard"
 
-# Endpoint público do BotRix para o leaderboard de pontos
-BOTRIX_URL = (
-    "https://botrix.live/api/public/leaderboard"
-    f"?user={CANAL}&platform=kick&mode=points"
-)
-
-# JSONbin
 JSONBIN_BIN_ID = "6ad0da85ac6210605a33fee6"
 JSONBIN_URL = f"https://api.jsonbin.io/v3/b/{JSONBIN_BIN_ID}"
 
-# GitHub Actions Secrets necessários:
+# GitHub Actions secret necessário:
 # JSONBIN_SECRET_KEY
 
 
 def get_json(url, params=None):
     """Faz GET e retorna JSON, levantando erro se a resposta falhar."""
-    cabecalhos = {
-        "User-Agent": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/131.0.0.0 Safari/537.36"
-        ),
-        "Accept": "application/json"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (compatible; AL1SS0NL-Leaderboard/1.0)",
+        "Accept": "application/json",
     }
-
-    response = requests.get(
-        url,
-        headers=cabecalhos,
-        params=params,
-        timeout=30
-    )
+    response = requests.get(url, headers=headers, params=params, timeout=30)
 
     if not response.ok:
-        print(f"Erro HTTP {response.status_code} ao consultar: {url}")
+        print(f"Erro HTTP {response.status_code} ao consultar: {response.url}")
         print(f"Resposta do servidor: {response.text[:1000]}")
 
     response.raise_for_status()
@@ -48,24 +32,27 @@ def get_json(url, params=None):
 
 
 def extrair_lista(data):
-    """Aceita respostas que vêm diretamente como lista ou dentro de record/data."""
+    """Aceita listas diretas ou listas dentro dos envelopes comuns da API."""
     if isinstance(data, list):
         return data
 
     if isinstance(data, dict):
-        for chave in ("record", "data", "users", "results"):
-            valor = data.get(chave)
-            if isinstance(valor, list):
-                return valor
+        for key in ("record", "data", "users", "results"):
+            value = data.get(key)
+            if isinstance(value, list):
+                return value
 
     raise ValueError(
-        "Formato inesperado da API. Resposta recebida: "
+        "Formato inesperado da API BotRix. Resposta recebida: "
         + str(data)[:1000]
     )
 
 
-def normalizar_usuario(item):
-    """Converte um registro da API do BotRix para o formato do site."""
+def normalizar_usuario(item, plataforma):
+    """Converte um participante para o formato consumido pelo site."""
+    if not isinstance(item, dict):
+        return None
+
     nome = (
         item.get("name")
         or item.get("username")
@@ -73,13 +60,9 @@ def normalizar_usuario(item):
         or item.get("display_name")
         or item.get("user")
     )
-
-    pontos = (
-        item.get("points")
-        if item.get("points") is not None
-        else item.get("current")
-    )
-
+    pontos = item.get("points")
+    if pontos is None:
+        pontos = item.get("current")
     if pontos is None:
         pontos = item.get("score")
 
@@ -88,76 +71,81 @@ def normalizar_usuario(item):
 
     try:
         pontos = int(float(pontos))
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, OverflowError):
         return None
 
     return {
         "name": str(nome),
         "points": pontos,
-        "platform": "kick",
-        "avatar": item.get("avatar") or item.get("profileImage") or ""
+        "platform": plataforma,
+        "avatar": item.get("avatar") or item.get("profileImage") or "",
     }
 
 
-def buscar_botrix():
-    data = get_json(BOTRIX_URL)
+def buscar_plataforma(plataforma):
+    """Busca o leaderboard BotRix de uma plataforma específica."""
+    data = get_json(
+        BOTRIX_API_URL,
+        params={"user": CANAL, "platform": plataforma, "mode": "points"},
+    )
     usuarios = extrair_lista(data)
     ranking = []
 
     for item in usuarios:
-        usuario = normalizar_usuario(item)
+        usuario = normalizar_usuario(item, plataforma)
         if usuario:
             ranking.append(usuario)
 
-    print(f"BotRix: {len(ranking)} usuários encontrados")
+    print(f"BotRix/{plataforma}: {len(ranking)} usuários encontrados")
     return ranking
 
 
 def publicar_jsonbin(top5):
     secret = os.environ.get("JSONBIN_SECRET_KEY")
-
     if not secret:
-        raise RuntimeError(
-            "Secret JSONBIN_SECRET_KEY não configurado no GitHub."
-        )
-
-    headers = {
-        "Content-Type": "application/json",
-        "X-Master-Key": secret
-    }
+        raise RuntimeError("Secret JSONBIN_SECRET_KEY não configurado no GitHub.")
 
     response = requests.put(
         JSONBIN_URL,
-        headers=headers,
+        headers={"Content-Type": "application/json", "X-Master-Key": secret},
         json=top5,
-        timeout=30
+        timeout=30,
     )
-
     response.raise_for_status()
     print("JSONbin atualizado com sucesso.")
 
 
 def main():
-    ranking = buscar_botrix()
+    # Busca os dois rankings no BotRix. Se um deles falhar, não publica
+    # um ranking incompleto no JSONBin.
+    kick = buscar_plataforma("kick")
+    twitch = buscar_plataforma("twitch")
 
-    # Maior pontuação primeiro
-    ranking.sort(key=lambda usuario: usuario["points"], reverse=True)
+    if not kick or not twitch:
+        raise RuntimeError(
+            "Uma das plataformas retornou um ranking vazio; publicação cancelada "
+            "para preservar os dados atuais do site."
+        )
+
+    # Cada conta/plataforma é uma entrada própria; não mistura contas homônimas.
+    todos = kick + twitch
+    todos.sort(key=lambda usuario: usuario["points"], reverse=True)
 
     top5 = []
-    for posicao, usuario in enumerate(ranking[:5], start=1):
+    for posicao, usuario in enumerate(todos[:5], start=1):
         top5.append({
             "rank": posicao,
             "name": usuario["name"],
             "points": usuario["points"],
             "platform": usuario["platform"],
-            "avatar": usuario.get("avatar", "")
+            "avatar": usuario.get("avatar", ""),
         })
 
-    print("Top 5 do BotRix:")
+    print("Top 5 combinado do BotRix:")
     for usuario in top5:
         print(
-            f'{usuario["rank"]}. {usuario["name']} '
-            f'- {usuario["points"]} pontos'
+            f'{usuario["rank"]}. {usuario["name"]} '
+            f'- {usuario["points"]} pontos ({usuario["platform"]})'
         )
 
     publicar_jsonbin(top5)
