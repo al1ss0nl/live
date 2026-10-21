@@ -26,4 +26,4 @@ jobs:
         env:
           JSONBIN_SECRET_KEY: ${{ secrets.JSONBIN_SECRET_KEY }}
         run: |
-          python seu_script.py  # Substitua pelo nome exato do seu arquivo Python
+          python o_nome_exato_do_teu_ficheiro.py
