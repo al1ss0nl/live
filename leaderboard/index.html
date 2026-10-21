@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>al1ss0nl | Leaderboard</title>
+    <link rel="icon" type="image/jpeg" href="../favicon.jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --hex-blue: #0ac8b9;
+            --zaun-green: #1de25f;
+            --gold: #c8aa6e;
+            --gold-light: #f0e6d2;
+            --dark-bg: #0a0a0c;
+            --panel-bg: #111a28;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--dark-bg);
+            background-image:
+                radial-gradient(circle at 50% 0%, rgba(10, 200, 185, 0.12) 0%, transparent 55%),
+                radial-gradient(circle at 50% 100%, rgba(29, 226, 95, 0.08) 0%, transparent 50%);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #f0e6d2;
+            overflow-x: hidden;
+        }
+
+        @media (min-width: 768px) {
+            body {
+                background-image:
+                    radial-gradient(circle at 50% 0%, rgba(10, 200, 185, 0.12) 0%, transparent 55%),
+                    radial-gradient(circle at 50% 100%, rgba(29, 226, 95, 0.08) 0%, transparent 50%),
+                    linear-gradient(rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.72)),
+                    url('../fundo.webp');
+            }
+        }
+
+        .clip-hex-sm {
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+        }
+
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(45px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in-up {
+            opacity: 0;
+            animation: fadeInUp 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .icon-kick {
+            color: #53fc18 !important;
+            -webkit-text-fill-color: #53fc18 !important;
+            filter: drop-shadow(0 0 4px rgba(83, 252, 24, 0.6));
+        }
+
+        .icon-twitch {
+            color: #9146FF !important;
+            -webkit-text-fill-color: #9146FF !important;
+            filter: drop-shadow(0 0 4px rgba(145, 70, 255, 0.6));
+        }
+
+        .btn-social {
+            position: relative;
+            overflow: hidden;
+            background: rgba(17, 26, 40, 0.8);
+            border: 1px solid var(--gold);
+            transition: all 0.4s ease;
+        }
+
+        .btn-twitch:hover {
+            border-color: #a970ff;
+            background: rgba(169, 112, 255, 0.1);
+            box-shadow: 0 0 15px rgba(169, 112, 255, 0.5);
+            color: #a970ff;
+        }
+
+        .btn-kick:hover {
+            border-color: #53fc18;
+            background: rgba(83, 252, 24, 0.1);
+            box-shadow: 0 0 15px rgba(83, 252, 24, 0.5);
+            color: #53fc18;
+        }
+
+        .z-drive-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            border: 1px dashed rgba(10, 200, 185, 0.12);
+            animation: spin 30s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes spin {
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .hextech-center-name {
+            position: fixed;
+            z-index: 1;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            white-space: nowrap;
+            color: #f1cb72;
+            opacity: .3;
+            font-size: clamp(2rem, 5.2vw, 4.6rem);
+            font-weight: 900;
+            letter-spacing: .24em;
+            text-shadow: 0 0 10px rgba(255,194,76,.9), 0 0 30px rgba(0,203,255,.55);
+            mix-blend-mode: screen;
+        }
+
+        main { position: relative; z-index: 10; }
+        footer { position: relative; z-index: 1; }
+
+        .rank-stage { position: relative; isolation: isolate; }
+
+        .rank-heading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .rank-heading:before,
+        .rank-heading:after {
+            content: "";
+            height: 1px;
+            flex: 1;
+            max-width: 180px;
+            background: linear-gradient(90deg, transparent, #39cfff);
+            opacity: .65;
+        }
+
+        .rank-heading:after {
+            background: linear-gradient(90deg, #39cfff, transparent);
+        }
+
+        .rank-kicker {
+            color: #56d9ff;
+            letter-spacing: .32em;
+            font-size: .75rem;
+            text-transform: uppercase;
+        }
+
+        .rank-podium {
+            display: grid;
+            grid-template-columns: 1fr 1.08fr 1fr;
+            gap: 22px;
+            align-items: center;
+        }
+
+        .lol-card {
+            position: relative;
+            padding: 0;
+            min-width: 0;
+            aspect-ratio: 0.82 / 1;
+            isolation: isolate;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.6));
+        }
+
+        .lol-card.rank-first {
+            --theme-c1: #c89b3c;
+            --theme-glow: rgba(30, 150, 255, 0.52);
+        }
+
+        .lol-card.rank-second {
+            --theme-c1: #ff302f;
+            --theme-glow: rgba(255, 48, 47, 0.55);
+        }
+
+        .lol-card.rank-third {
+            --theme-c1: #c032ff;
+            --theme-glow: rgba(174, 46, 255, 0.55);
+        }
+
+        .lol-card-border {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: visible;
+            z-index: 5;
+        }
+
+        .lol-frame-image,
+        .lol-crystal-glow {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: fill;
+        }
+
+        .lol-card-inner {
+            position: relative;
+            z-index: 6;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 20px 18px 24px;
+            text-align: center;
+        }
+
+        .rank-crown {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 7;
+        }
+
+        .lol-avatar-container {
+            position: absolute;
+            top: 18%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 48%;
+            aspect-ratio: 1 / 1;
+            z-index: 6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lol-avatar-frame {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .lol-avatar-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--theme-c1);
+            overflow: hidden;
+            background: rgba(0,0,0,0.4);
+        }
+
+        .lol-avatar-inner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .lol-rank-place {
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--theme-c1);
+            text-shadow: 0 0 8px var(--theme-glow);
+            margin-bottom: 2px;
+            z-index: 7;
+        }
+
+        .lol-player-name {
+            font-size: clamp(1rem, 1.8vw, 1.4rem);
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 6px;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            z-index: 7;
+        }
+
+        .lol-points-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            color: #f0e6d2;
+            font-size: 0.85rem;
+            font-weight: 700;
+            z-index: 7;
+        }
+
+        .lol-points-badge i { color: var(--theme-c1); }
+
+        .rank-lower {
+            border: 1px solid rgba(54, 181, 255, 0.35);
+            padding: 16px;
+            background: linear-gradient(135deg, rgba(5, 13, 25, 0.96), rgba(7, 20, 34, 0.9));
+            clip-path: polygon(0 12px, 12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+        }
+
+        .rank-lower-title {
+            color: #75dfff;
+            font-size: .85rem;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin: 0 0 12px;
+        }
+
+        .rank-lower-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 16px;
+        }
+
+        .rank-row {
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: linear-gradient(90deg, rgba(18, 43, 65, 0.8), rgba(7, 17, 30, 0.8));
+            border: 1px solid rgba(66, 166, 226, 0.16);
+        }
+
+        .rank-row-number {
+            color: #65d6ff;
+            font-size: 1.9rem;
+            font-weight: 700;
+            min-width: 29px;
+        }
+
+        .rank-row-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid rgba(10, 200, 185, 0.5);
+        }
+
+        .rank-row-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+            color: #dbe9f8;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .rank-row-points {
+            color: #8bdcff;
+            white-space: nowrap;
+            font-weight: 700;
+            font-size: .9rem;
+        }
+
+        .rank-row .icon-kick,
+        .rank-row .icon-twitch {
+            margin-left: 3px;
+        }
+
+        /* AJUSTE RESPONSIVO DO PÓDIO */
+        @media (max-width: 900px) {
+            body {
+                padding-left: 12px !important;
+                padding-right: 12px !important;
+                overflow-x: hidden;
+                background-color: #05090a !important;
+            }
+
+            main {
+                width: 100%;
+                max-width: 560px;
+            }
+
+            header {
+                margin-bottom: 2.75rem !important;
+            }
+
+            header h1 {
+                font-size: clamp(2.5rem, 11vw, 4rem) !important;
+                line-height: 1;
+            }
+
+            .rank-podium {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                gap: 22px !important;
+                width: 100% !important;
+                max-width: 340px !important;
+                margin: 0 auto !important;
+            }
+
+            .lol-card {
+                flex: 0 0 auto !important;
+                width: min(100%, 300px) !important;
+                aspect-ratio: 0.82 / 1;
+            }
+
+            .lol-card.rank-first { order: 0; }
+            .lol-card.rank-second { order: 1; }
+            .lol-card.rank-third { order: 2; }
+
+            .lol-card-inner {
+                padding: 20px 12px 22px !important;
+                justify-content: flex-end !important;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .lol-rank-place,
+            .lol-player-name,
+            .lol-points-badge {
+                position: relative;
+                max-width: 100%;
+                text-align: center;
+            }
+
+            .lol-player-name {
+                font-size: clamp(.9rem, 4vw, 1.15rem);
+                white-space: nowrap;
+            }
+
+            .lol-points-badge {
+                font-size: .8rem;
+                padding: 4px 9px;
+            }
+
+            .rank-lower-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hextech-center-name,
+            .z-drive-bg {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="antialiased min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 relative">
+
+    <div class="z-drive-bg"></div>
+    <div class="z-drive-bg" style="width: 820px; height: 820px; border: 1px solid rgba(29, 226, 95, 0.05); animation-direction: reverse; animation-duration: 45s;"></div>
+    <div class="hextech-center-name" aria-hidden="true">AL1SS0NL</div>
+
+    <main class="w-full max-w-5xl z-10">
+
+        <!-- CABEÇALHO -->
+        <header class="text-center mb-16 relative fade-in-up" style="animation-delay: 0.15s;">
+            <div class="inline-block relative">
+                <div class="absolute -top-6 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-[#c8aa6e] to-transparent"></div>
+
+                <h1 class="text-6xl sm:text-8xl font-bold tracking-wider uppercase mb-2 text-[#c8aa6e]" style="text-shadow: 0 0 20px rgba(200, 170, 110, 0.5);">
+                    AL1SS0NL
+                </h1>
+
+                <p class="text-xl sm:text-2xl tracking-[0.3em] text-[#c8aa6e] uppercase font-semibold">
+                    RANKING DA COMUNIDADE
+                    <i class="fa-solid fa-microchip ml-2 text-sm opacity-70"></i>
+                </p>
+
+                <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-[#0ac8b9] to-transparent"></div>
+            </div>
+        </header>
+
+        <!-- NAVEGAÇÃO -->
+        <nav class="flex flex-wrap justify-center gap-4 mb-12 fade-in-up" aria-label="Navegação principal" style="animation-delay:.2s">
+            <a href="../" class="btn-social clip-hex-sm px-7 py-3 flex items-center gap-3 text-lg font-bold justify-center text-[#c8aa6e] hover:text-white">
+                <i class="fa-solid fa-house"></i><span>Início</span>
+            </a>
+
+            <a href="../comandos/" class="btn-social clip-hex-sm px-7 py-3 flex items-center gap-3 text-lg font-bold justify-center text-[#0ac8b9] hover:text-white">
+                <i class="fa-solid fa-terminal"></i><span>Comandos</span>
+            </a>
+
+            <a href="./" class="btn-social clip-hex-sm px-7 py-3 flex items-center gap-3 text-lg font-bold justify-center text-[#c8aa6e] hover:text-white">
+                <i class="fa-solid fa-trophy"></i><span>Leaderboard</span>
+            </a>
+        </nav>
+
+        <!-- LEADERBOARD -->
+        <section class="mb-16 rank-stage" aria-labelledby="leaderboard-title">
+
+            <div class="rank-heading fade-in-up" style="animation-delay: 1.2s;">
+                <h2 id="leaderboard-title" class="text-2xl sm:text-3xl font-bold text-center tracking-widest text-[#f0e6d2] uppercase">
+                    <i class="fa-solid fa-trophy mr-2 text-[#c8aa6e]"></i>
+                    Top Mestres do Tempo
+                </h2>
+            </div>
+
+            <p class="rank-kicker text-center mb-10">
+                Leaderboard unificado
+                <span style="color:#c8aa6e">•</span>
+                atualização automática
+            </p>
+
+            <div class="rank-podium mb-8">
+
+                <!-- 2º LUGAR -->
+                <article class="lol-card rank-second fade-in-up" style="animation-delay: 1.4s;" aria-label="Segundo lugar">
+                    <div class="lol-card-border">
+                        <img class="lol-frame-image" src="../moldura-2.png" alt="" aria-hidden="true">
+                    </div>
+
+                    <div class="lol-avatar-container">
+                        <div class="lol-avatar-frame">
+                            <div class="lol-avatar-inner">
+                                <img id="rank-avatar-2" class="rank-avatar-image" alt="Avatar de 2º lugar" style="display:none;" loading="lazy">
+                                <i class="fa-solid fa-user" id="rank-icon-fallback-2"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lol-card-inner">
+                        <div class="lol-rank-place">2º LUGAR</div>
+                        <h3 id="rank-name-2" class="lol-player-name">A aguardar...</h3>
+                        <div class="lol-points-badge">
+                            <i class="fa-solid fa-stopwatch"></i>
+                            <span id="rank-points-2">- Pontos</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 1º LUGAR -->
+                <article class="lol-card rank-first fade-in-up" style="animation-delay: 1.3s;" aria-label="Primeiro lugar">
+                    <div class="lol-card-border">
+                        <img class="lol-frame-image" src="../moldura-1.png" alt="" aria-hidden="true">
+                        <img class="lol-crystal-glow" src="../moldura-1-cristais.png" alt="" aria-hidden="true">
+                    </div>
+
+                    <div class="rank-crown text-[#e8bd63] text-xl filter drop-shadow-[0_0_8px_#c89b3c]">
+                        <i class="fa-solid fa-crown"></i>
+                    </div>
+
+                    <div class="lol-avatar-container">
+                        <div class="lol-avatar-frame">
+                            <div class="lol-avatar-inner">
+                                <img id="rank-avatar-1" class="rank-avatar-image" alt="Avatar de 1º lugar" style="display:none;" loading="lazy">
+                                <i class="fa-solid fa-user" id="rank-icon-fallback-1"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lol-card-inner">
+                        <div class="lol-rank-place">1º LUGAR</div>
+                        <h3 id="rank-name-1" class="lol-player-name">A aguardar...</h3>
+                        <div class="lol-points-badge">
+                            <i class="fa-solid fa-crown"></i>
+                            <span id="rank-points-1">- Pontos</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 3º LUGAR -->
+                <article class="lol-card rank-third fade-in-up" style="animation-delay: 1.5s;" aria-label="Terceiro lugar">
+                    <div class="lol-card-border">
+                        <img class="lol-frame-image" src="../moldura-3.png" alt="" aria-hidden="true">
+                    </div>
+
+                    <div class="lol-avatar-container">
+                        <div class="lol-avatar-frame">
+                            <div class="lol-avatar-inner">
+                                <img id="rank-avatar-3" class="rank-avatar-image" alt="Avatar de 3º lugar" style="display:none;" loading="lazy">
+                                <i class="fa-solid fa-user" id="rank-icon-fallback-3"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lol-card-inner">
+                        <div class="lol-rank-place">3º LUGAR</div>
+                        <h3 id="rank-name-3" class="lol-player-name">A aguardar...</h3>
+                        <div class="lol-points-badge">
+                            <i class="fa-solid fa-medal"></i>
+                            <span id="rank-points-3">- Pontos</span>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+
+            <!-- 4º E 5º LUGARES -->
+            <div class="rank-lower fade-in-up" style="animation-delay: 1.6s">
+                <h4 class="rank-lower-title">
+                    <i class="fa-solid fa-list-ol mr-2"></i>
+                    Demais classificados
+                </h4>
+
+                <div class="rank-lower-grid">
+                    <div class="rank-row">
+                        <span class="rank-row-number">04</span>
+                        <img id="rank-avatar-4" class="rank-row-avatar" src="" alt="" style="display:none;" loading="lazy">
+                        <span id="rank-name-4" class="rank-row-name">A carregar...</span>
+                        <span id="rank-points-4" class="rank-row-points">- Pontos</span>
+                    </div>
+
+                    <div class="rank-row">
+                        <span class="rank-row-number">05</span>
+                        <img id="rank-avatar-5" class="rank-row-avatar" src="" alt="" style="display:none;" loading="lazy">
+                        <span id="rank-name-5" class="rank-row-name">A carregar...</span>
+                        <span id="rank-points-5" class="rank-row-points">- Pontos</span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- REDES SOCIAIS -->
+        <div class="social-links flex flex-wrap justify-center gap-6 fade-in-up" style="animation-delay: 1.7s;">
+            <a href="https://kick.com/al1ss0nl" target="_blank" class="btn-social btn-kick clip-hex-sm px-8 py-4 flex items-center gap-3 text-lg font-bold min-w-[200px] justify-center group border border-[#53fc18] text-[#53fc18] hover:bg-[#53fc18] hover:text-black transition-all duration-300">
+                <i class="fa-brands fa-kickstarter text-2xl"></i>
+                <span>Assistir na Kick</span>
+            </a>
+
+            <a href="https://twitch.tv/al1ss0nl" target="_blank" class="btn-social btn-twitch clip-hex-sm px-8 py-4 flex items-center gap-3 text-lg font-bold min-w-[200px] justify-center group border border-[#9146FF] text-[#9146FF] hover:bg-[#9146FF] hover:text-white transition-all duration-300">
+                <i class="fa-brands fa-twitch text-2xl"></i>
+                <span>Assistir na Twitch</span>
+            </a>
+        </div>
+
+    </main>
+
+    <!-- RODAPÉ -->
+    <footer class="mt-20 text-center opacity-50 text-sm font-medium fade-in-up" style="animation-delay: 1.8s;">
+        <p>© 2026 AL1SS0NL.</p>
+    </footer>
+
+    <!-- ATUALIZAÇÃO AUTOMÁTICA DO JSONBIN -->
+    <script>
+        const LEADERBOARD_URL = 'https://api.jsonbin.io/v3/b/6ad0da85ac6210605a33fee6/latest';
+        const LEADERBOARD_REFRESH_MS = 5 * 60 * 1000;
+
+        function atualizarAvatar(rank, url) {
+            const img = document.getElementById(`rank-avatar-${rank}`);
+            const fallbackIcon = document.getElementById(`rank-icon-fallback-${rank}`);
+
+            if (!img) return;
+
+            if (url) {
+                img.src = url;
+                img.style.display = rank <= 3 ? 'block' : 'inline-block';
+
+                if (fallbackIcon) fallbackIcon.style.display = 'none';
+
+                img.onerror = () => {
+                    img.style.display = 'none';
+                    if (fallbackIcon) fallbackIcon.style.display = 'inline-block';
+                };
+            } else {
+                img.removeAttribute('src');
+                img.style.display = 'none';
+
+                if (fallbackIcon) fallbackIcon.style.display = 'inline-block';
+            }
+        }
+
+        async function atualizarLeaderboard() {
+            try {
+                const response = await fetch(
+                    `${LEADERBOARD_URL}?_=${Date.now()}`,
+                    { cache: 'no-store' }
+                );
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const rankingData = await response.json();
+                const lista = Array.isArray(rankingData)
+                    ? rankingData
+                    : (rankingData.record || []);
+
+                for (let rank = 1; rank <= 5; rank++) {
+                    const user = lista.find(
+                        entry => Number(entry.rank) === rank
+                    );
+
+                    const nameEl = document.getElementById(`rank-name-${rank}`);
+                    const pointsEl = document.getElementById(`rank-points-${rank}`);
+
+                    atualizarAvatar(rank, user?.avatar);
+
+                    if (user) {
+                        if (nameEl) {
+                            nameEl.textContent = user.name ?? 'A aguardar...';
+
+                            const platformIcon = document.createElement('i');
+
+                            if (user.platform === 'kick') {
+                                platformIcon.className = 'fa-brands fa-kickstarter icon-kick ml-2';
+                                platformIcon.title = 'Kick';
+                            } else if (user.platform === 'twitch') {
+                                platformIcon.className = 'fa-brands fa-twitch icon-twitch ml-2';
+                                platformIcon.title = 'Twitch';
+                            }
+
+                            if (platformIcon.className) {
+                                nameEl.appendChild(platformIcon);
+                            }
+                        }
+
+                        if (pointsEl) {
+                            pointsEl.textContent = user.points ?? '- Pontos';
+                        }
+                    } else {
+                        if (nameEl) nameEl.textContent = 'A aguardar...';
+                        if (pointsEl) pointsEl.textContent = '- Pontos';
+                    }
+                }
+
+                console.log(
+                    'Leaderboard atualizado:',
+                    new Date().toLocaleTimeString()
+                );
+
+            } catch (err) {
+                console.error('Erro ao atualizar o leaderboard:', err);
+            }
+        }
+
+        atualizarLeaderboard();
+        setInterval(atualizarLeaderboard, LEADERBOARD_REFRESH_MS);
+    </script>
+
+</body>
+</html>
