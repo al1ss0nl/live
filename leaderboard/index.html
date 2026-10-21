@@ -931,10 +931,11 @@
         .lol-card .lol-avatar-wing { width:9%; height:30%; top:35%; }
         .lol-card .lol-avatar-wing.left { left:-5%; }
         .lol-card .lol-avatar-wing.right { right:-5%; }
-        .lol-card .lol-rank-place { position:absolute; top:66%; left:50%; width:88%; margin:0; transform:translate(-50%,-50%) !important; text-align:center; font-size:clamp(.75rem,1.4vw,1rem) !important; letter-spacing:.16em; z-index:8; }
-        .lol-card .lol-player-name { position:absolute; top:80%; left:50%; width:84%; max-width:84%; margin:0; transform:translate(-50%,-50%) !important; text-align:center; font-size:clamp(1rem,2vw,1.45rem); z-index:8; }
+        .lol-card .lol-rank-place { position:absolute; top:66%; left:50%; width:88%; margin:0; transform:translate(-50%,-50%) !important; text-align:center; font-size:clamp(.9rem,1.8vw,1.2rem) !important; letter-spacing:.16em; z-index:8; }
+        .lol-card .lol-player-name { position:absolute; top:77%; left:50%; width:84%; max-width:84%; margin:0; transform:translate(-50%,-50%) !important; text-align:center; font-size:clamp(1rem,2vw,1.45rem); z-index:8; }
         .lol-card .lol-points-badge { position:absolute; top:88%; left:50%; margin:0; transform:translate(-50%,-50%) !important; white-space:nowrap; z-index:8; }
-        .lol-card.rank-first .rank-crown { display:block !important; position:absolute; top:19%; left:50%; margin:0; transform:translate(-50%,-50%); z-index:12; color:#f3c969; font-size:1.35rem; filter:drop-shadow(0 0 8px rgba(255,202,83,.9)); animation:crownBounce 1.25s ease-in-out infinite; }
+        .lol-card.rank-first .lol-points-badge { top:calc(83% + 10px) !important; }
+        .lol-card.rank-first .rank-crown { display:block !important; position:absolute; top:calc(38% - 30px) !important; left:50%; margin:0; transform:translate(-50%,-50%); z-index:12; color:#f3c969; font-size:1.35rem; filter:drop-shadow(0 0 8px rgba(255,202,83,.9)); animation:crownBounce 1.25s ease-in-out infinite; }
         @keyframes crownBounce { 0%,100% { transform:translate(-50%,-50%); } 50% { transform:translate(-50%,calc(-50% - 3px)); } }
         @media (min-width:768px) { .rank-stage .lol-card { aspect-ratio:.78 / 1; } }
         .lol-card .lol-bottom-crest { display:none !important; }
@@ -1291,6 +1292,8 @@
 
 </body>
 </html>
+
+
 
 
 
