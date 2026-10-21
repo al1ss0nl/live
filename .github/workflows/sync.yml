@@ -26,4 +26,4 @@ jobs:
         env:
           JSONBIN_SECRET_KEY: ${{ secrets.JSONBIN_SECRET_KEY }}
         run: |
-          python o_nome_exato_do_teu_ficheiro.py
+          python update_leaderboard.py
