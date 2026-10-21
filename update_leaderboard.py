@@ -21,7 +21,13 @@ def get_json(url, params=None):
         "User-Agent": "Mozilla/5.0 (compatible; AL1SS0NL-Leaderboard/1.0)",
         "Accept": "application/json",
     }
-    response = requests.get(url, headers=headers, params=params, timeout=30)
+
+    response = requests.get(
+        url,
+        headers=headers,
+        params=params,
+        timeout=30
+    )
 
     if not response.ok:
         print(f"Erro HTTP {response.status_code} ao consultar: {response.url}")
@@ -48,8 +54,8 @@ def extrair_lista(data):
     )
 
 
-def normalizar_usuario(item, plataforma):
-    """Converte um participante para o formato consumido pelo site."""
+def normalizar_usuario(item):
+    """Converte um participante da Kick para o formato do site."""
     if not isinstance(item, dict):
         return None
 
@@ -60,9 +66,12 @@ def normalizar_usuario(item, plataforma):
         or item.get("display_name")
         or item.get("user")
     )
+
     pontos = item.get("points")
+
     if pontos is None:
         pontos = item.get("current")
+
     if pontos is None:
         pontos = item.get("score")
 
@@ -77,75 +86,100 @@ def normalizar_usuario(item, plataforma):
     return {
         "name": str(nome),
         "points": pontos,
-        "platform": plataforma,
-        "avatar": item.get("avatar") or item.get("profileImage") or "",
+        "platform": "kick",
+        "avatar": (
+            item.get("avatar")
+            or item.get("profileImage")
+            or ""
+        ),
     }
 
 
-def buscar_plataforma(plataforma):
-    """Busca o leaderboard BotRix de uma plataforma específica."""
+def buscar_kick():
+    """Busca somente o leaderboard da Kick no BotRix."""
     data = get_json(
         BOTRIX_API_URL,
-        params={"user": CANAL, "platform": plataforma, "mode": "points"},
+        params={
+            "user": CANAL,
+            "platform": "kick",
+            "mode": "points",
+        },
     )
+
     usuarios = extrair_lista(data)
     ranking = []
 
     for item in usuarios:
-        usuario = normalizar_usuario(item, plataforma)
+        usuario = normalizar_usuario(item)
+
         if usuario:
             ranking.append(usuario)
 
-    print(f"BotRix/{plataforma}: {len(ranking)} usuários encontrados")
+    print(f"BotRix/Kick: {len(ranking)} usuários encontrados")
+
+    if not ranking:
+        raise RuntimeError(
+            "A Kick retornou um ranking vazio. "
+            "Publicação cancelada para preservar os dados atuais do site."
+        )
+
+    ranking.sort(
+        key=lambda usuario: usuario["points"],
+        reverse=True
+    )
+
     return ranking
 
 
 def publicar_jsonbin(top5):
+    """Publica o Top 5 no JSONbin."""
     secret = os.environ.get("JSONBIN_SECRET_KEY")
+
     if not secret:
-        raise RuntimeError("Secret JSONBIN_SECRET_KEY não configurado no GitHub.")
+        raise RuntimeError(
+            "Secret JSONBIN_SECRET_KEY não configurado no GitHub."
+        )
 
     response = requests.put(
         JSONBIN_URL,
-        headers={"Content-Type": "application/json", "X-Master-Key": secret},
+        headers={
+            "Content-Type": "application/json",
+            "X-Master-Key": secret,
+        },
         json=top5,
         timeout=30,
     )
+
+    if not response.ok:
+        print(f"Erro ao atualizar JSONbin: HTTP {response.status_code}")
+        print(response.text[:1000])
+
     response.raise_for_status()
     print("JSONbin atualizado com sucesso.")
 
 
 def main():
-    # Busca os dois rankings no BotRix. Se um deles falhar, não publica
-    # um ranking incompleto no JSONBin.
-    kick = buscar_plataforma("kick")
-    twitch = buscar_plataforma("twitch")
+    # Busca somente os participantes da Kick.
+    kick = buscar_kick()
 
-    if not kick or not twitch:
-        raise RuntimeError(
-            "Uma das plataformas retornou um ranking vazio; publicação cancelada "
-            "para preservar os dados atuais do site."
-        )
-
-    # Cada conta/plataforma é uma entrada própria; não mistura contas homônimas.
-    todos = kick + twitch
-    todos.sort(key=lambda usuario: usuario["points"], reverse=True)
-
+    # Monta o Top 5 global da Kick.
     top5 = []
-    for posicao, usuario in enumerate(todos[:5], start=1):
+
+    for posicao, usuario in enumerate(kick[:5], start=1):
         top5.append({
             "rank": posicao,
             "name": usuario["name"],
             "points": usuario["points"],
-            "platform": usuario["platform"],
+            "platform": "kick",
             "avatar": usuario.get("avatar", ""),
         })
 
-    print("Top 5 combinado do BotRix:")
+    print("Top 5 da Kick:")
+
     for usuario in top5:
         print(
             f'{usuario["rank"]}. {usuario["name"]} '
-            f'- {usuario["points"]} pontos ({usuario["platform"]})'
+            f'- {usuario["points"]} pontos (Kick)'
         )
 
     publicar_jsonbin(top5)
