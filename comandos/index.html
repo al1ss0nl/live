@@ -250,6 +250,33 @@
             56%, 100% { opacity: 0; background-position: 25% 0; }
         }
 
+        /* Partículas da Kick e Twitch no fundo */
+        .stream-particles { position: fixed; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; }
+        .stream-particle {
+            position: absolute;
+            top: 0;
+            left: var(--left);
+            font-size: clamp(18px, 2vw, 28px);
+            line-height: 1;
+            opacity: 0;
+            user-select: none;
+            animation: streamParticleRise var(--speed) linear var(--delay) infinite;
+        }
+        .stream-particle-kick { color: #53fc18; filter: drop-shadow(0 0 7px rgba(83,252,24,.55)); }
+        .stream-particle-twitch { color: #a970ff; filter: drop-shadow(0 0 7px rgba(145,70,255,.6)); }
+        @keyframes streamParticleRise {
+            0% { transform: translate3d(0, 110vh, 0) rotate(-18deg); opacity: 0; }
+            12%, 82% { opacity: .24; }
+            100% { transform: translate3d(var(--drift), -18vh, 0) rotate(22deg); opacity: 0; }
+        }
+        @media (max-width: 767px) {
+            .stream-particle { font-size: 17px; opacity: .16; }
+            .stream-particle:nth-child(n+9) { display: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .stream-particle { animation: none !important; opacity: 0 !important; }
+        }
+
         /* Animação Z-Drive de Fundo */
         .z-drive-bg {
             position: absolute;
@@ -978,6 +1005,20 @@
         </svg>
     </div>
     <div class="hextech-center-name" aria-hidden="true">AL1SS0NL</div>
+    <div class="stream-particles" aria-hidden="true">
+        <span class="stream-particle stream-particle-kick" style="--left:5%;--drift:9vw;--speed:21s;--delay:-6s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-twitch" style="--left:17%;--drift:-7vw;--speed:25s;--delay:-15s"><i class="fa-brands fa-twitch"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:29%;--drift:8vw;--speed:23s;--delay:-11s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-twitch" style="--left:42%;--drift:-10vw;--speed:27s;--delay:-3s"><i class="fa-brands fa-twitch"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:56%;--drift:7vw;--speed:22s;--delay:-18s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-twitch" style="--left:69%;--drift:-8vw;--speed:26s;--delay:-9s"><i class="fa-brands fa-twitch"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:81%;--drift:6vw;--speed:24s;--delay:-20s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-twitch" style="--left:93%;--drift:-6vw;--speed:28s;--delay:-13s"><i class="fa-brands fa-twitch"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:11%;--drift:8vw;--speed:29s;--delay:-24s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-twitch" style="--left:74%;--drift:-9vw;--speed:30s;--delay:-5s"><i class="fa-brands fa-twitch"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:38%;--drift:7vw;--speed:26s;--delay:-17s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-twitch" style="--left:87%;--drift:-7vw;--speed:24s;--delay:-10s"><i class="fa-brands fa-twitch"></i></span>
+    </div>
 
     
     <main class="w-full max-w-5xl z-10">
@@ -1157,28 +1198,35 @@
                     </div>
                 </div>
 
-<!-- 12: !level -->
+<!-- 12: !top -->
                 <div class="cmd-card-wrapper clip-hex fade-in-up" style="animation-delay: 1.5s;">
                     <div class="cmd-card clip-hex relative overflow-hidden">
-                        <i class="fa-solid fa-layer-group text-4xl absolute right-3 bottom-3 opacity-10 text-[var(--gold)]"></i>
-                        <h3 class="cmd-title text-2xl font-bold text-[#c8aa6e] transition-colors">!level</h3>
+                        <i class="fa-solid fa-trophy text-4xl absolute right-3 bottom-3 opacity-10 text-[var(--gold)]"></i>
+                        <h3 class="cmd-title text-2xl font-bold text-[#c8aa6e] transition-colors">!top</h3>
                         <div class="cmd-desc">
-                            <p class="text-sm text-gray-400 font-medium leading-tight mt-2">
-                                Consulta o teu nível atual de atividade e progressão na transmissão. 📊
-                            </p>
+                            <p class="text-sm text-gray-400 font-medium leading-tight mt-2">Mostra o ranking de pontos dos espectadores da comunidade. 🏆</p>
                         </div>
                     </div>
                 </div>
 
-<!-- 13: !points -->
+<!-- 13: !batalha, !duelo -->
                 <div class="cmd-card-wrapper clip-hex fade-in-up" style="animation-delay: 1.6s;">
+                    <div class="cmd-card clip-hex relative overflow-hidden">
+                        <i class="fa-solid fa-hand-fist text-4xl absolute right-3 bottom-3 opacity-10 text-[var(--gold)]"></i>
+                        <h3 class="cmd-title text-2xl font-bold text-[#c8aa6e] transition-colors">!batalha, !duelo</h3>
+                        <div class="cmd-desc">
+                            <p class="text-sm text-gray-400 font-medium leading-tight mt-2">Desafia alguém do chat para uma batalha ou duelo. ⚔️</p>
+                        </div>
+                    </div>
+                </div>
+
+<!-- 14: !points -->
+                <div class="cmd-card-wrapper clip-hex fade-in-up" style="animation-delay: 1.7s;">
                     <div class="cmd-card clip-hex relative overflow-hidden">
                         <i class="fa-solid fa-coins text-4xl absolute right-3 bottom-3 opacity-10 text-[var(--gold)]"></i>
                         <h3 class="cmd-title text-2xl font-bold text-[#c8aa6e] transition-colors">!points</h3>
                         <div class="cmd-desc">
-                            <p class="text-sm text-gray-400 font-medium leading-tight mt-2">
-                                Mostra quantos pontos acumulados tens guardados no canal. 🪙
-                            </p>
+                            <p class="text-sm text-gray-400 font-medium leading-tight mt-2">Mostra quantos pontos acumulados tens guardados no canal. 🪙</p>
                         </div>
                     </div>
                 </div>
@@ -1189,9 +1237,7 @@
                         <i class="fa-solid fa-clock text-4xl absolute right-3 bottom-3 opacity-10 text-[var(--gold)]"></i>
                         <h3 class="cmd-title text-2xl font-bold text-[#c8aa6e] transition-colors">!uptime</h3>
                         <div class="cmd-desc">
-                            <p class="text-sm text-gray-400 font-medium leading-tight mt-2">
-                                Verifica há quantas horas e minutos a transmissão está no ar. ⏱️
-                            </p>
+                            <p class="text-sm text-gray-400 font-medium leading-tight mt-2">Verifica há quantas horas e minutos a transmissão está no ar. ⏱️</p>
                         </div>
                     </div>
                 </div>
@@ -1202,29 +1248,14 @@
                         <i class="fa-solid fa-glasses text-4xl absolute right-3 bottom-3 opacity-10 text-[var(--gold)]"></i>
                         <h3 class="cmd-title text-2xl font-bold text-[#c8aa6e] transition-colors">!watchtime</h3>
                         <div class="cmd-desc">
-                            <p class="text-sm text-gray-400 font-medium leading-tight mt-2">
-                                Informa o tempo total que já passaste a assistir às lives do canal. 👀
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-<!-- 17: !xp -->
-                <div class="cmd-card-wrapper clip-hex fade-in-up" style="animation-delay: 2.0s;">
-                    <div class="cmd-card clip-hex relative overflow-hidden">
-                        <i class="fa-solid fa-bolt text-4xl absolute right-3 bottom-3 opacity-10 text-[var(--gold)]"></i>
-                        <h3 class="cmd-title text-2xl font-bold text-[#c8aa6e] transition-colors">!xp</h3>
-                        <div class="cmd-desc">
-                            <p class="text-sm text-gray-400 font-medium leading-tight mt-2">
-                                Mostra a tua experiência atual em XP e quanto falta para subir de nível. ⚡
-                            </p>
+                            <p class="text-sm text-gray-400 font-medium leading-tight mt-2">Informa o tempo total que já passaste a assistir às lives do canal. 👀</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
         <!-- Redes / Links -->
-        <div class="social-links flex flex-wrap justify-center gap-6 fade-in-up" style="animation-delay: 1.7s;">
+        <div class="social-links flex flex-wrap justify-center gap-6 fade-in-up" style="animation-delay: 2.0s;">
             <a href="https://kick.com/al1ss0nl" target="_blank" class="btn-social btn-kick social-glint social-glint-kick clip-hex-sm px-8 py-4 flex items-center gap-3 text-lg font-bold min-w-[200px] justify-center group border border-[#53fc18] text-[#53fc18] hover:bg-[#53fc18] hover:text-black transition-all duration-300">
                 <i class="fa-brands fa-kickstarter text-2xl group-hover:animate-pulse"></i><span class="social-link-label social-link-kick">Assistir na Kick</span>
             </a>
@@ -1232,7 +1263,7 @@
                 <i class="fa-brands fa-twitch text-2xl group-hover:animate-pulse"></i><span class="social-link-label social-link-twitch">Assistir na Twitch</span>
             </a>
             <a href="https://www.youtube.com/al1ss0n" target="_blank" class="social-glint social-glint-youtube clip-hex-sm px-8 py-4 flex items-center gap-3 text-lg font-bold min-w-[200px] justify-center group border border-[#ff0000] text-[#ff0000] hover:bg-[#ff0000] hover:text-white transition-all duration-300">
-                <i class="fa-brands fa-youtube text-2xl group-hover:animate-pulse"></i><span class="social-link-label social-link-youtube">Canal do YouTube</span>
+                <i class="fa-brands fa-youtube text-2xl group-hover:animate-pulse"></i><span class="social-link-label social-link-youtube">Ver no YouTube</span>
             </a>
             <a href="https://www.instagram.com/al1ss0nl" target="_blank" class="social-glint social-glint-instagram clip-hex-sm px-8 py-4 flex items-center gap-3 text-lg font-bold min-w-[200px] justify-center group border border-[#c13584] text-[#c13584] hover:text-white hover:border-transparent hover:bg-gradient-to-r hover:from-purple-600 hover:to-yellow-400 transition-all duration-300">
                 <i class="fa-brands fa-instagram text-2xl group-hover:animate-pulse"></i><span class="social-link-label social-link-instagram">Seguir no Insta</span>
@@ -1242,7 +1273,7 @@
     </main>
 
     <!-- Rodapé -->
-    <footer class="mt-20 text-center opacity-50 text-sm font-medium fade-in-up" style="animation-delay: 1.8s;">
+    <footer class="mt-20 text-center opacity-50 text-sm font-medium fade-in-up" style="animation-delay: 2.1s;">
         <p>© 2026 AL1SS0NL.</p>
     </footer>
     
@@ -1292,3 +1323,4 @@
 
 </body>
 </html>
+
