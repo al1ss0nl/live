@@ -1,4 +1,3 @@
-
 import os
 import requests
 
@@ -8,27 +7,22 @@ import requests
 
 CANAL = "al1ss0nl"
 
+# Endpoint público do BotRix para o leaderboard de pontos
 BOTRIX_URL = (
     "https://botrix.live/api/public/leaderboard"
-    "?user={canal}&platform=kick&mode=points"
+    f"?user={CANAL}&platform=kick&mode=points"
 )
-
-# StreamElements - canal da Twitch
-SE_CHANNEL_ID = "5ed12d4387ba786ed2abc3db"
 
 # JSONbin
 JSONBIN_BIN_ID = "6ad0da85ac6210605a33fee6"
 JSONBIN_URL = f"https://api.jsonbin.io/v3/b/{JSONBIN_BIN_ID}"
 
-# GitHub Actions Secrets:
+# GitHub Actions Secrets necessários:
 # JSONBIN_SECRET_KEY
-# STREAMELEMENTS_TWITCH_JWT
 
 
-
-def get_json(url, headers=None, params=None):
+def get_json(url, params=None):
     """Faz GET e retorna JSON, levantando erro se a resposta falhar."""
-
     cabecalhos = {
         "User-Agent": (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -37,10 +31,6 @@ def get_json(url, headers=None, params=None):
         ),
         "Accept": "application/json"
     }
-
-    # Preserva os cabeçalhos específicos do StreamElements.
-    if headers:
-        cabecalhos.update(headers)
 
     response = requests.get(
         url,
@@ -55,7 +45,6 @@ def get_json(url, headers=None, params=None):
 
     response.raise_for_status()
     return response.json()
-
 
 
 def extrair_lista(data):
@@ -75,11 +64,8 @@ def extrair_lista(data):
     )
 
 
-def normalizar_usuario(item, plataforma):
-    """
-    Converte um registro da API para o formato usado pelo site.
-    Tenta reconhecer nomes e campos de pontos comuns.
-    """
+def normalizar_usuario(item):
+    """Converte um registro da API do BotRix para o formato do site."""
     nome = (
         item.get("name")
         or item.get("username")
@@ -108,132 +94,24 @@ def normalizar_usuario(item, plataforma):
     return {
         "name": str(nome),
         "points": pontos,
-        "platform": plataforma,
+        "platform": "kick",
         "avatar": item.get("avatar") or item.get("profileImage") or ""
     }
 
 
-# ============================================================
-# KICK: PONTOS PELO BOTRIX
-# ============================================================
-
-def buscar_kick():
-    url = BOTRIX_URL.format(canal=CANAL)
-    data = get_json(url)
-
+def buscar_botrix():
+    data = get_json(BOTRIX_URL)
     usuarios = extrair_lista(data)
     ranking = []
 
     for item in usuarios:
-        usuario = normalizar_usuario(item, "kick")
+        usuario = normalizar_usuario(item)
         if usuario:
-            # BotRix da Kick: manter sem avatar
-            usuario["avatar"] = ""
             ranking.append(usuario)
 
-    print(f"Kick/BotRix: {len(ranking)} usuários encontrados")
+    print(f"BotRix: {len(ranking)} usuários encontrados")
     return ranking
 
-
-# ============================================================
-# TWITCH: PONTOS PELO STREAMELEMENTS
-# ============================================================
-
-def buscar_twitch_pontos():
-    jwt = os.environ.get("STREAMELEMENTS_TWITCH_JWT")
-
-    if not jwt:
-        raise RuntimeError(
-            "Secret STREAMELEMENTS_TWITCH_JWT não configurado no GitHub."
-        )
-
-    headers = {
-        "Authorization": f"Bearer {jwt}",
-        "Accept": "application/json"
-    }
-
-    ranking = []
-    limite = 100
-    offset = 0
-
-    # Pagina para buscar a lista de usuários do leaderboard.
-    while True:
-        url = (
-            f"https://api.streamelements.com/kappa/v2/"
-            f"points/{SE_CHANNEL_ID}/top"
-        )
-
-        data = get_json(
-            url,
-            headers=headers,
-            params={"limit": limite, "offset": offset}
-        )
-
-        usuarios = extrair_lista(data)
-
-        if not usuarios:
-            break
-
-        for item in usuarios:
-            usuario = normalizar_usuario(item, "twitch")
-            if usuario:
-                ranking.append(usuario)
-
-        if len(usuarios) < limite:
-            break
-
-        offset += limite
-
-    print(f"Twitch/StreamElements: {len(ranking)} usuários encontrados")
-    return ranking, headers
-
-
-def buscar_avatares_twitch(headers):
-    """
-    Tenta obter avatares dos registros de atividade recentes.
-    Atenção: atividades não são o leaderboard de pontos e podem
-    não incluir todos os participantes.
-    """
-    url = (
-        "https://api.streamelements.com/kappa/v2/"
-        f"activities/{SE_CHANNEL_ID}"
-    )
-
-    try:
-        data = get_json(url, headers=headers)
-        atividades = extrair_lista(data)
-    except Exception as erro:
-        print(f"Não foi possível buscar avatares das atividades: {erro}")
-        return {}
-
-    avatares = {}
-
-    for atividade in atividades:
-        dados = atividade.get("data") or {}
-
-        nome = (
-            dados.get("username")
-            or dados.get("displayName")
-            or atividade.get("username")
-            or atividade.get("name")
-        )
-
-        avatar = (
-            dados.get("avatar")
-            or dados.get("profileImage")
-            or atividade.get("avatar")
-        )
-
-        if nome and avatar:
-            avatares[str(nome).lower()] = avatar
-
-    print(f"Avatares Twitch encontrados nas atividades: {len(avatares)}")
-    return avatares
-
-
-# ============================================================
-# JUNTA, ORDENA E PUBLICA NO JSONBIN
-# ============================================================
 
 def publicar_jsonbin(top5):
     secret = os.environ.get("JSONBIN_SECRET_KEY")
@@ -260,40 +138,13 @@ def publicar_jsonbin(top5):
 
 
 def main():
-    kick = buscar_kick()
+    ranking = buscar_botrix()
 
-    twitch, se_headers = buscar_twitch_pontos()
-    avatares = buscar_avatares_twitch(se_headers)
-
-    # Aplica avatares da Twitch quando foi possível encontrá-los.
-    for usuario in twitch:
-        avatar = avatares.get(usuario["name"].lower())
-        if avatar:
-            usuario["avatar"] = avatar
-
-    # Junta as plataformas em um ranking só.
-    todos = kick + twitch
-
-    # Se um usuário estiver duplicado, mantém o registro com mais pontos
-    # (a deduplicação usa nome + plataforma).
-    unicos = {}
-    for usuario in todos:
-        chave = (
-            usuario["name"].strip().lower(),
-            usuario["platform"]
-        )
-
-        atual = unicos.get(chave)
-        if atual is None or usuario["points"] > atual["points"]:
-            unicos[chave] = usuario
-
-    todos = list(unicos.values())
-
-    # Maior pontuação primeiro.
-    todos.sort(key=lambda usuario: usuario["points"], reverse=True)
+    # Maior pontuação primeiro
+    ranking.sort(key=lambda usuario: usuario["points"], reverse=True)
 
     top5 = []
-    for posicao, usuario in enumerate(todos[:5], start=1):
+    for posicao, usuario in enumerate(ranking[:5], start=1):
         top5.append({
             "rank": posicao,
             "name": usuario["name"],
@@ -302,12 +153,11 @@ def main():
             "avatar": usuario.get("avatar", "")
         })
 
-    print("Top 5 combinado:")
+    print("Top 5 do BotRix:")
     for usuario in top5:
         print(
-            f'{usuario["rank"]}. {usuario["name"]} '
-            f'- {usuario["points"]} pontos '
-            f'({usuario["platform"]})'
+            f'{usuario["rank"]}. {usuario["name']} '
+            f'- {usuario["points"]} pontos'
         )
 
     publicar_jsonbin(top5)
@@ -315,4 +165,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
