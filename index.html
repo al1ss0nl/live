@@ -307,24 +307,28 @@
         }
 
         /* Partículas da Kick no fundo */
-        .stream-particles { position: fixed; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; }
+        .stream-particles { position: fixed; inset: 0; z-index: 4; overflow: hidden; pointer-events: none; }
         .stream-particle {
             position: absolute;
             top: 0;
             left: var(--left);
-            font-size: clamp(18px, 2vw, 28px);
+            font-size: clamp(24px, 2.3vw, 36px);
             line-height: 1;
             opacity: 0;
             user-select: none;
             animation: streamParticleRise var(--speed) linear var(--delay) infinite;
+            will-change: transform, opacity;
+        }
+        @keyframes streamParticleRise {
+            0% { transform: translate3d(0, 110vh, 0); opacity: 0; }
+            12%, 82% { opacity: .38; }
+            100% { transform: translate3d(var(--drift), -18vh, 0); opacity: 0; }
         }
         .stream-particle-kick { color: #53fc18; filter: drop-shadow(0 0 7px rgba(83,252,24,.55)); }
         @media (max-width: 767px) {
-            .stream-particle { font-size: 17px; opacity: .16; }
-            .stream-particle:nth-child(n+9) { display: none; }
+            .stream-particle { position: absolute; font-size: 21px; animation: streamParticleRise var(--speed) linear var(--delay) infinite !important; animation-play-state: running !important; will-change: transform, opacity; }
         }
         @media (prefers-reduced-motion: reduce) {
-            .stream-particle { animation: none !important; opacity: 0 !important; }
         }
 
         /* Animação Z-Drive de Fundo */
@@ -1048,13 +1052,27 @@
         </svg>
     </div>
     <div class="hextech-center-name" aria-hidden="true">AL1SS0NL</div>
-    <div class="stream-particles" aria-hidden="true">
-        <span class="stream-particle stream-particle-kick" style="--left:5%;--drift:9vw;--speed:21s;--delay:-6s"><i class="fa-brands fa-kickstarter"></i></span>
-        <span class="stream-particle stream-particle-kick" style="--left:29%;--drift:8vw;--speed:23s;--delay:-11s"><i class="fa-brands fa-kickstarter"></i></span>
-        <span class="stream-particle stream-particle-kick" style="--left:56%;--drift:7vw;--speed:22s;--delay:-18s"><i class="fa-brands fa-kickstarter"></i></span>
-        <span class="stream-particle stream-particle-kick" style="--left:81%;--drift:6vw;--speed:24s;--delay:-20s"><i class="fa-brands fa-kickstarter"></i></span>
-        <span class="stream-particle stream-particle-kick" style="--left:11%;--drift:8vw;--speed:29s;--delay:-24s"><i class="fa-brands fa-kickstarter"></i></span>
-        <span class="stream-particle stream-particle-kick" style="--left:38%;--drift:7vw;--speed:26s;--delay:-17s"><i class="fa-brands fa-kickstarter"></i></span>
+<div class="stream-particles" aria-hidden="true">
+        <span class="stream-particle stream-particle-kick" style="--left:4%;--drift:8vw;--speed:21s;--delay:-6s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:13%;--drift:-7vw;--speed:25s;--delay:-15s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:21%;--drift:6vw;--speed:23s;--delay:-11s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:30%;--drift:-10vw;--speed:27s;--delay:-3s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:38%;--drift:8vw;--speed:22s;--delay:-18s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:47%;--drift:-8vw;--speed:26s;--delay:-9s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:55%;--drift:7vw;--speed:24s;--delay:-20s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:64%;--drift:-6vw;--speed:28s;--delay:-13s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:73%;--drift:8vw;--speed:29s;--delay:-24s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:82%;--drift:-9vw;--speed:30s;--delay:-5s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:91%;--drift:7vw;--speed:26s;--delay:-17s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:98%;--drift:-7vw;--speed:24s;--delay:-10s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:8%;--drift:5vw;--speed:20s;--delay:-2s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:18%;--drift:-8vw;--speed:31s;--delay:-12s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:27%;--drift:6vw;--speed:24s;--delay:-21s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:43%;--drift:-7vw;--speed:29s;--delay:-7s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:58%;--drift:9vw;--speed:22s;--delay:-14s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:69%;--drift:-5vw;--speed:27s;--delay:-23s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:79%;--drift:7vw;--speed:25s;--delay:-19s"><i class="fa-brands fa-kickstarter"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:89%;--drift:-8vw;--speed:30s;--delay:-4s"><i class="fa-brands fa-kickstarter"></i></span>
     </div>
 
     
