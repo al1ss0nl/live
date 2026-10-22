@@ -252,11 +252,6 @@
             filter: drop-shadow(0 0 4px rgba(83, 252, 24, 0.6));
         }
 
-        .icon-twitch {
-            color: #9146FF !important;
-            -webkit-text-fill-color: #9146FF !important;
-            filter: drop-shadow(0 0 4px rgba(145, 70, 255, 0.6));
-        }
 
         /* Botões Sociais */
         .btn-social {
@@ -267,12 +262,6 @@
             transition: all 0.4s ease;
         }
 
-        .btn-twitch:hover {
-            border-color: #a970ff;
-            background: rgba(169, 112, 255, 0.1);
-            box-shadow: 0 0 15px rgba(169, 112, 255, 0.5);
-            color: #a970ff;
-        }
 
         .btn-kick:hover {
             border-color: #53fc18;
@@ -302,10 +291,6 @@
         .social-glint-kick::after {
             background-image: linear-gradient(90deg, transparent 0%, transparent 46%, rgba(83,252,24,.08) 48%, rgba(255,255,255,.92) 50%, rgba(83,252,24,.78) 52%, transparent 55%, transparent 100%);
         }
-        .social-glint-twitch::after {
-            background-image: linear-gradient(90deg, transparent 0%, transparent 46%, rgba(145,70,255,.12) 48%, rgba(255,255,255,.92) 50%, rgba(145,70,255,.86) 52%, transparent 55%, transparent 100%);
-            animation-delay: 0s;
-        }
         .social-glint-youtube::after {
             background-image: linear-gradient(90deg, transparent 0%, transparent 46%, rgba(255,0,0,.1) 48%, rgba(255,255,255,.95) 50%, rgba(255,0,0,.84) 52%, transparent 55%, transparent 100%);
             animation-delay: 0s;
@@ -321,7 +306,7 @@
             56%, 100% { opacity: 0; background-position: 25% 0; }
         }
 
-        /* Partículas da Kick e Twitch no fundo */
+        /* Partículas da Kick no fundo */
         .stream-particles { position: fixed; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; }
         .stream-particle {
             position: absolute;
@@ -334,12 +319,6 @@
             animation: streamParticleRise var(--speed) linear var(--delay) infinite;
         }
         .stream-particle-kick { color: #53fc18; filter: drop-shadow(0 0 7px rgba(83,252,24,.55)); }
-        .stream-particle-twitch { color: #a970ff; filter: drop-shadow(0 0 7px rgba(145,70,255,.6)); }
-        @keyframes streamParticleRise {
-            0% { transform: translate3d(0, 110vh, 0) rotate(-18deg); opacity: 0; }
-            12%, 82% { opacity: .24; }
-            100% { transform: translate3d(var(--drift), -18vh, 0) rotate(22deg); opacity: 0; }
-        }
         @media (max-width: 767px) {
             .stream-particle { font-size: 17px; opacity: .16; }
             .stream-particle:nth-child(n+9) { display: none; }
@@ -456,13 +435,6 @@
             animation: nameLightSweep 4.2s linear infinite;
         }
         .lol-player-name .icon-kick { color: #53fc18; -webkit-text-fill-color: #53fc18; }
-        .lol-player-name .icon-twitch { color: #9146ff; -webkit-text-fill-color: #9146ff; }
-        .lol-player-name:has(.icon-kick) {
-            background-image: linear-gradient(110deg, #fff 0%, #fff 44%, #a6ff78 49%, #53fc18 51%, #fff 56%, #fff 100%);
-        }
-        .lol-player-name:has(.icon-twitch) {
-            background-image: linear-gradient(110deg, #fff 0%, #fff 44%, #e3b4ff 49%, #9146ff 51%, #fff 56%, #fff 100%);
-        }
         #rank-name-2 { animation-delay: -1.4s; }
         #rank-name-3 { animation-delay: -2.8s; }
         @keyframes nameLightSweep { from { background-position: 100% 0; } to { background-position: 0 0; } }
@@ -909,7 +881,7 @@
         .rank-row-number { color: #65d6ff; font-size: 1.9rem; font-weight: 700; min-width: 29px; }
         .rank-row-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; color: #dbe9f8; font-weight: 600; }
         .rank-row-points { color: #8bdcff; white-space: nowrap; font-weight: 700; font-size: .9rem; }
-        .rank-row .icon-kick, .rank-row .icon-twitch { margin-left: 3px; }
+        .rank-row .icon-kick { margin-left: 3px; }
 
         @media(max-width: 767px) {
             body {
@@ -1078,17 +1050,17 @@
     <div class="hextech-center-name" aria-hidden="true">AL1SS0NL</div>
     <div class="stream-particles" aria-hidden="true">
         <span class="stream-particle stream-particle-kick" style="--left:5%;--drift:9vw;--speed:21s;--delay:-6s"><i class="fa-brands fa-kickstarter"></i></span>
-        <span class="stream-particle stream-particle-twitch" style="--left:17%;--drift:-7vw;--speed:25s;--delay:-15s"><i class="fa-brands fa-twitch"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:17%;--drift:-7vw;--speed:25s;--delay:-15s"><i class="fa-brands fa-kickstarter"></i></span>
         <span class="stream-particle stream-particle-kick" style="--left:29%;--drift:8vw;--speed:23s;--delay:-11s"><i class="fa-brands fa-kickstarter"></i></span>
-        <span class="stream-particle stream-particle-twitch" style="--left:42%;--drift:-10vw;--speed:27s;--delay:-3s"><i class="fa-brands fa-twitch"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:42%;--drift:-10vw;--speed:27s;--delay:-3s"><i class="fa-brands fa-kickstarter"></i></span>
         <span class="stream-particle stream-particle-kick" style="--left:56%;--drift:7vw;--speed:22s;--delay:-18s"><i class="fa-brands fa-kickstarter"></i></span>
-        <span class="stream-particle stream-particle-twitch" style="--left:69%;--drift:-8vw;--speed:26s;--delay:-9s"><i class="fa-brands fa-twitch"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:69%;--drift:-8vw;--speed:26s;--delay:-9s"><i class="fa-brands fa-kickstarter"></i></span>
         <span class="stream-particle stream-particle-kick" style="--left:81%;--drift:6vw;--speed:24s;--delay:-20s"><i class="fa-brands fa-kickstarter"></i></span>
-        <span class="stream-particle stream-particle-twitch" style="--left:93%;--drift:-6vw;--speed:28s;--delay:-13s"><i class="fa-brands fa-twitch"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:93%;--drift:-6vw;--speed:28s;--delay:-13s"><i class="fa-brands fa-kickstarter"></i></span>
         <span class="stream-particle stream-particle-kick" style="--left:11%;--drift:8vw;--speed:29s;--delay:-24s"><i class="fa-brands fa-kickstarter"></i></span>
-        <span class="stream-particle stream-particle-twitch" style="--left:74%;--drift:-9vw;--speed:30s;--delay:-5s"><i class="fa-brands fa-twitch"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:74%;--drift:-9vw;--speed:30s;--delay:-5s"><i class="fa-brands fa-kickstarter"></i></span>
         <span class="stream-particle stream-particle-kick" style="--left:38%;--drift:7vw;--speed:26s;--delay:-17s"><i class="fa-brands fa-kickstarter"></i></span>
-        <span class="stream-particle stream-particle-twitch" style="--left:87%;--drift:-7vw;--speed:24s;--delay:-10s"><i class="fa-brands fa-twitch"></i></span>
+        <span class="stream-particle stream-particle-kick" style="--left:87%;--drift:-7vw;--speed:24s;--delay:-10s"><i class="fa-brands fa-kickstarter"></i></span>
     </div>
 
     
@@ -1128,9 +1100,6 @@
         <div class="social-links flex flex-wrap justify-center gap-6 fade-in-up" style="animation-delay: 1.7s;">
             <a href="https://kick.com/al1ss0nl" target="_blank" class="btn-social btn-kick social-glint social-glint-kick clip-hex-sm px-8 py-4 flex items-center gap-3 text-lg font-bold min-w-[200px] justify-center group border border-[#53fc18] text-[#53fc18] hover:bg-[#53fc18] hover:text-black transition-all duration-300">
                 <i class="fa-brands fa-kickstarter text-2xl group-hover:animate-pulse"></i><span class="home-type-target social-link-label social-link-kick">Assistir na Kick</span>
-            </a>
-            <a href="https://twitch.tv/al1ss0nl" target="_blank" class="btn-social btn-twitch social-glint social-glint-twitch clip-hex-sm px-8 py-4 flex items-center gap-3 text-lg font-bold min-w-[200px] justify-center group border border-[#9146FF] text-[#9146FF] hover:bg-[#9146FF] hover:text-white transition-all duration-300">
-                <i class="fa-brands fa-twitch text-2xl group-hover:animate-pulse"></i><span class="home-type-target social-link-label social-link-twitch">Assistir na Twitch</span>
             </a>
             <a href="https://www.youtube.com/al1ss0n" target="_blank" class="social-glint social-glint-youtube clip-hex-sm px-8 py-4 flex items-center gap-3 text-lg font-bold min-w-[200px] justify-center group border border-[#ff0000] text-[#ff0000] hover:bg-[#ff0000] hover:text-white transition-all duration-300">
                 <i class="fa-brands fa-youtube text-2xl group-hover:animate-pulse"></i><span class="home-type-target social-link-label social-link-youtube">Canal do YouTube</span>
