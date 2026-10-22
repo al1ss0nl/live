@@ -325,8 +325,13 @@
             100% { transform: translate3d(var(--drift), -18vh, 0); opacity: 0; }
         }
         .stream-particle-kick { color: #53fc18; filter: drop-shadow(0 0 7px rgba(83,252,24,.55)); }
+        @keyframes streamParticleRiseMobile {
+            0% { top: 110vh; opacity: 0; }
+            12%, 82% { opacity: .38; }
+            100% { top: -18vh; opacity: 0; }
+        }
         @media (max-width: 767px) {
-            .stream-particle { position: absolute; font-size: 21px; animation: streamParticleRise var(--speed) linear var(--delay) infinite !important; animation-play-state: running !important; will-change: transform, opacity; }
+            .stream-particle { top: 110vh; font-size: 21px; animation: streamParticleRiseMobile var(--speed) linear var(--delay) infinite !important; animation-play-state: running !important; will-change: top, opacity; }
         }
         @media (prefers-reduced-motion: reduce) {
         }
